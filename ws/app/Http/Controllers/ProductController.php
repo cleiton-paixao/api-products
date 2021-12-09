@@ -2,9 +2,11 @@
 
 
 /**
- *  DESENVOLVEDOR ELVIS ARAUJO E JOCLEITON PAIXÃO
  *  INSTITUIÇÃO : UNIME LAURO DE FREITAS
- *  CURSO: SISTEMAS DE INFORMAÇÃO 6° SEMESTRE
+ *  CURSO: SISTEMAS DE INFORMAÇÃO
+ *  DISCIPLINA: PROGRAMAÇÃO WEB
+ *  PROFESSOR: PABLO RICARDO ROXO
+ *  DESENVOLVEDOR ELVIS SOARES DE ARAUJO
  */
 namespace App\Http\Controllers;
 
@@ -13,6 +15,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -61,9 +64,27 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $rules = [
+            'name'=>'required',
+            'description'=>'required',
+            'price'=>'required',
+        ];
+        $messages = [
+            'name.required'=>'Nome Obrigatorio',
+            'description.required'=>'Descrição Obrigatorio',
+            'price.required'=>'Preço Obrigatorio',
+        ];
+        $validator=Validator::make($request->all(),$rules,$messages);
+        if($validator->fails()){
+            $messages=$validator->messages();
+            $errors=$messages->all();
+            return response()->json($errors,401);
+        }
         $data = $request->except('_token');
         $slug = Str::slug($request->name);
         $slug_count = Product::where('slug',$slug)->count();
+
+
 
         if($slug_count > 0){
             $slug .= time().'-'.$slug;
@@ -108,6 +129,22 @@ class ProductController extends Controller
     public function update(Request $request,$id)
     {
 
+        $rules = [
+            'name'=>'required',
+            'description'=>'required',
+            'price'=>'required',
+        ];
+        $messages = [
+            'name.required'=>'Nome Obrigatorio',
+            'description.required'=>'Descrição Obrigatorio',
+            'price.required'=>'Preço Obrigatorio',
+        ];
+        $validator=Validator::make($request->all(),$rules,$messages);
+        if($validator->fails()){
+            $messages=$validator->messages();
+            $errors=$messages->all();
+            return response()->json($errors,401);
+        }
         $data = $request->except('_token');
         try{
             $product =  Product::findOrFail($id);

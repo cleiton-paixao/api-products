@@ -17,8 +17,6 @@ class ProductFactory extends Factory
             'name' => $this->faker->sentence(3,false),
             'slug' => $this->faker->unique()->slug,
             'description' => $this->faker->text,
-            'sumary' => $this->faker->text,
-            'image'=> $this->faker->imageUrl('300','300'),
             'price'=>$this->faker->numberBetween(10,2)
         ];
     }
